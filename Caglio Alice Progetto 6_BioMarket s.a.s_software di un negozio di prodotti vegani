@@ -1,0 +1,148 @@
+storage = []
+
+# Function to add a new product in the storage
+def add_storage():
+    product_name = str(input("Nome del prodotto: "))
+    while True:
+        try:
+            product_quantity = int(input("Quantità: "))
+            break
+        except ValueError:
+            print("La quantità deve essere un numero intero.")
+    
+    while True:
+        try:
+            purchase_price = float(input("Prezzo di acquisto:€ "))
+            break
+        except ValueError:
+            print("Il prezzo di acquisto deve essere un numero.")
+    
+    while True:
+        try:
+            sale_price = float(input("Prezzo di vendita:€ "))
+            break
+        except ValueError:
+            print("Il prezzo di vendita deve essere un numero.")
+    
+    storage.append({
+        "nome": product_name,
+        "quantità": product_quantity,
+        "prezzo di acquisto": purchase_price, 
+        "prezzo di vendita": sale_price
+    })
+    print(f"AGGIUNTO {product_quantity} X {product_name}")
+
+
+
+#Fuction to list all di controls
+
+def print_controls_help(control_list):
+
+    print("I comandi disponibili sono:")
+
+    for i, entry in enumerate(control_list):
+        print(f"{i+1}) {entry}")
+
+control_list = ["aggiungi:aggiungi un prodotto al magazzino", "elenca: elenca i prodotti in magazzino", 
+                    "vendita: registra una vendita effettuata", "profitti: mostra i profitti totali",
+                   "aiuto: mostra i possibili comandi", "chiudi: esci dal programma"]
+
+#Function to list all the products in the storage
+
+def list_products():
+    print("Prodotto\tQuantità\tPrezzo")
+    for product in storage:
+        print("%s\t%s\t€%s" % (product["nome"], product["quantità"], product["prezzo di vendita"]))
+
+#Function to register a sell
+
+def sell_products():
+    total_sales = 0
+    sold_items = []
+    
+    while True:
+        product_sold = input("Nome del prodotto: ")
+        quantity_sold = int(input("Quantità: "))
+        
+        product_found = False
+        for product in storage:
+            if product["nome"] == product_sold:
+                product_found = True
+                if product["quantità"] >= quantity_sold:
+                    product["quantità"] -= quantity_sold
+                    total_sale_price = product["prezzo di vendita"]*quantity_sold
+                    sold_items.append(f"{quantity_sold} X {product_sold} :€{total_sale_price}")
+                    total_sales += total_sale_price
+                    print (f"VENDITA REGISTRATA \n{quantity_sold} X {product_sold} :€{total_sale_price}")
+                else:
+                    print("Quantità non disponibile nel magazzino.")
+                break
+        if not product_found:
+            print("Prodotto nonn trovato nel magazzino.")
+        
+        add_another= input("Aggiungere altro prodotto? (si/no): ")
+        if add_another.lower() != "si":
+            break
+            
+    return sold_items, total_sales
+
+sold_items, total_sales = sell_products()
+
+print("\nDettagli delle vendite: ")  
+for item in sold_items:
+    print("-", item)
+print(f"\nTotale: €{total_sales}")
+        
+#Function for profits
+
+def profit_calculate():
+    gross_profit = sum(storage[product][2]-storage[product][1]*storage[product][0] for product in storage)
+    purchase_cost = sum(storage[product][1]*storage[product][0] for product in storage)
+    net_profit = gross_profit - purchase_cost
+    print("Profitto lordo: ", {gross_profit})
+    print("Profitto netto: ", {net_profit})
+
+
+#Main Function for controls
+def exec_control(control):
+    if control == 'aggiungi':
+        add_storage()
+    elif control == 'aiuto':
+        print_controls_help(control_list)
+    elif control == 'elenca':
+        list_products()
+    elif control == 'vendita':
+        sell_products()
+    elif control == 'profitti':
+        profit_calculate()
+    elif control == 'chiudi':
+        print('Bye Bye')
+    else:
+        print('Il comando inserito non è valido, i comandi disponibili sono i seguenti: \n'+ '-' + 
+                         'aggiungi: aggiungi un prodotto al magazzino \n'+ '-' + 
+                         'elenca: elenca i prodotto in magazzino \n'+ '-' + 
+                         'vendita: registra una vendita effettuata \n'+'-' + 
+                         'profitti: mostra i profitti totali \n'+'-' + 
+                         'aiuto: mostra i possibili comandi \n'+'-' + 
+                         'chiudi: esci dal programma')
+#Main Function
+
+accepted_controls = ['aggiungi', 'elenca', 'vendita', 'profitti', 'aiuto', 'chiudi']
+while True:
+    control = input('Inserisci un comando: ')
+    
+    if not control in accepted_controls:
+        print ('Il comando inserito non è valido, i comandi disponibili sono i seguenti: \n'+ '-' + 
+                         'aggiungi: aggiungi un prodotto al magazzino \n'+ '-' + 
+                         'elenca: elenca i prodotto in magazzino \n'+ '-' + 
+                         'vendita: registra una vendita effettuata \n'+'-' + 
+                         'profitti: mostra i profitti totali \n'+'-' + 
+                         'aiuto: mostra i possibili comandi \n'+'-' + 
+                         'chiudi: esci dal programma')
+    if control in accepted_controls:
+        exec_control(control)
+
+    try:
+        storage
+    except NameError:
+            storage = {}
